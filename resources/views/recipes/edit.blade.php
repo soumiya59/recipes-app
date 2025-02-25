@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1>Modifier la recette</h1>
-    <form action="{{ route('recipes.update', $recipe->id) }}" method="POST">
+    <form action="{{ route('recipes.update', $recipe->id) }}" method="POST"  id="edit-recipe-form">
         @csrf
         @method('PUT')
         <div class="form-group">
@@ -40,14 +40,23 @@
                 @foreach ($recipe->ingredients as $ingredient)
                 <div class="ingredient
                 -group mb-2">
+
                     <input type="text" name="ingredients[{{ $loop->index }}][nom]" class="form-control" value="{{ $ingredient->nom }}" placeholder="Nom de l'ingrédient" required>
                     <input type="text" name="ingredients[{{ $loop->index }}][quantite]" class="form-control" value="{{ $ingredient->pivot->quantite }}" placeholder="Quantité" required>
+
+                    <!-- Bouton de suppression -->
+                    <form action="{{ route('recipes.ingredient.destroy', [$recipe->id, $ingredient->id]) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                    </form>
+
                 </div>
                 @endforeach
             </div>
             <button type="button" id="add-ingredient" class="btn btn-secondary">Ajouter un ingrédient</button>
         </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
+        <button type="submit" class="btn btn-primary" id='edit'>Modifier</button>
     </form>
 </div>
 
@@ -62,6 +71,9 @@
             </div>
         `;
         container.insertAdjacentHTML('beforeend', newIngredient);
+    });
+     document.getElementById('edit-recipe-form').addEventListener('submit', function (e) {
+        console.log('Formulaire soumis'); // Vérifiez si ce message apparaît dans la console
     });
 </script>
 @endsection
